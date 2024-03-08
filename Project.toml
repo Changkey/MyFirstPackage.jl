@@ -3,6 +3,11 @@ uuid = "7516325f-1f67-4bc6-ab72-7002fe4ae7d0"
 authors = ["Changkey Culing"]
 version = "1.0.0-DEV"
 
+[deps]
+GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+
 [compat]
 julia = "1.10"
 
