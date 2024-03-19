@@ -79,6 +79,7 @@ function example_d3q19(;
     u0=Point(0.0, 0.1, 0.2)) # initial and in-flow speed
     # Initialize all the arrays to steady rightward flow:
     rho = equilibrium_density(D3Q19(), 1.0, u0)
+    println(rho)
     rgrid = fill(rho, height, width, length)
 
     # Initialize barriers:
