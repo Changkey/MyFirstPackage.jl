@@ -56,6 +56,24 @@ end
 weights(::D3Q19) = (1 / 18, 1 / 18, 1 / 36, 1 / 18, 1 / 36, 1 / 36, 1 / 36, 1 / 36, 1 / 36, 1 / 3, 1 / 36, 1 / 36, 1 / 36, 1 / 36, 1 / 36, 1 / 18, 1 / 36, 1 / 18, 1 / 18)
 
 """
+    _LatticeBoltzmann{D, N, T, CFG, MT, BT}
+
+A lattice Boltzmann simulation with D dimensions, N velocities, and lattice configuration CFG.
+"""
+
+struct _LatticeBoltzmann{D,N,T,CFG<:AbstractLBConfig{D,N},MT<:AbstractArray{Cell{N,T},D},BT<:AbstractArray{Bool,D}}
+    config::CFG # lattice configuration
+    grid::MT    # density of the fluid
+    gridcache::MT # cache for the density of the fluid
+    barrier::BT # barrier configuration
+end
+
+function _LatticeBoltzmann(config::AbstractLBConfig{D,N}, grid::AbstractArray{<:Cell,D}, barrier::AbstractArray{Bool,D}) where {D,N}
+    @assert size(grid) == size(barrier)
+    return _LatticeBoltzmann(config, grid, similar(grid), barrier)
+end
+
+"""
 curl(u::Array{Point3D{T},3})
 
 Compute the curl of the momentum field in 3D, which is defined as:
@@ -75,11 +93,11 @@ function curl(u::Array{Point3D{T},3}) where {T}
 end
 
 function example_d3q19(;
-    height=80, width=200, length=80,
+    height=80, width=100, length=80,
     u0=Point(0.0, 0.1, 0.2)) # initial and in-flow speed
     # Initialize all the arrays to steady rightward flow:
     rho = equilibrium_density(D3Q19(), 1.0, u0)
-    println(rho)
+    # println(rho)
     rgrid = fill(rho, height, width, length)
 
     # Initialize barriers:
@@ -87,5 +105,5 @@ function example_d3q19(;
     mid = div(height, 2)
     barrier[mid-8:mid+8, div(height, 2), div(length, 2)] .= true              # simple linear barrier
 
-    return LatticeBoltzmann(D3Q19(), rgrid, barrier)
+    return _LatticeBoltzmann(D3Q19(), rgrid, barrier)
 end
